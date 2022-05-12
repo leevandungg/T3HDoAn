@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đề thi</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <meta name="description" content="Developed By M Abdur Rokib Promy">
+    <meta name="keywords" content="Admin, Bootstrap 3, Template, Theme, Responsive">
+    <!-- bootstrap 3.0.2 -->
+    <link th:href="@{/admin/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <!-- font Awesome -->
+    <link th:href="@{/admin/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css}"
+          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <!-- Ionicons -->
+    <link th:href="@{/admin/css/ionicons.min.css}" rel="stylesheet" type="text/css"/>
+    <!-- Morris chart -->
+    <link th:href="@{/admin/css/morris/morris.css}" rel="stylesheet" type="text/css"/>
+    <!-- jvectormap -->
+    <link th:href="@{/admin/css/jvectormap/jquery-jvectormap-1.2.2.css}" rel="stylesheet" type="text/css"/>
+    <!-- Date Picker -->
+    <link th:href="@{/admin/css/datepicker/datepicker3.css}" rel="stylesheet" type="text/css"/>
+    <!-- fullCalendar -->
+    <!-- <link href="css/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" /> -->
+    <!-- Daterange picker -->
+    <link th:href="@{/admin/css/daterangepicker/daterangepicker-bs3.css}" rel="stylesheet" type="text/css"/>
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link th:href="@{/admin/css/iCheck/all.css}" rel="stylesheet" type="text/css"/>
+    <!-- bootstrap wysihtml5 - text editor -->
+    <!-- <link href="css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css" /> -->
+    <link th:href='@{http://fonts.googleapis.com/css?family=Lato}' rel='stylesheet' type='text/css'>
+    <!-- Theme style -->
+    <link th:href="@{/admin/css/style.css}" rel="stylesheet" type="text/css"/>
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+    <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js}"></script>
+    <![endif]-->
+
+    <style>
+
+        .add-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add {
+            display: inline-block;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        .add-title h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .add-form form input {
+            display: block;
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            outline: none;
+            padding: 5px;
+        }
+
+        #saveBtn {
+            width: 150px;
+            border: 1px solid transparent;
+            margin: 10px auto 0;
+            background: #6f7da2;
+            color: white;
+            border-radius: 50rem;
+            text-align: center;
+            transition: all 0.2s linear;
+            cursor: pointer;
+        }
+
+        #saveExam {
+            width: 150px;
+            border: 1px solid transparent;
+            margin: 20px auto 0;
+            background: #6f7da2;
+            color: white;
+            border-radius: 50rem;
+            text-align: center;
+            transition: all 0.2s linear;
+            cursor: pointer;
+            padding: 5px 0px;
+            display: block;
+        }
+
+        input[type=text]:focus {
+            border-color: #6f7da2;
+        }
+
+        #saveBtn:hover,
+        #saveExam:hover {
+            background-color: white;
+            color: black;
+            border: 1px solid #6f7da2;
+        }
+
+        .add-form form input[type=text] {
+            color: #364e8d;
+            font-weight: bold;
+        }
+
+        .add-form form input[type=text]:focus {
+            color: #6f7da2;
+            background: none;
+            font-weight: revert;
+        }
+
+        .add-form .form-suggest {
+            display: flex;
+            gap: 0 20px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .add-form .form-suggest > input[name='answer'] {
+            display: none;
+        }
+
+        .add-form .form-suggest > input[name='answer']:checked + .label-answer {
+            color: #21c543;
+        }
+
+        .add-form .form-suggest .label-answer {
+            font-size: 25px;
+            color: #d3ffdc;
+            cursor: pointer;
+            transition: all linear 0.2s;
+        }
+
+        .add-form .form-suggest .form-detail-suggest {
+            display: flex;
+            gap: 0 20px;
+            align-items: center;
+            position: relative;
+        }
+
+        .add-form .form-suggest .form-detail-suggest:before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #ffffff;
+            width: 30px;
+            height: 100%;
+            border: 1px solid #dc7e88;
+            cursor: pointer;
+        }
+
+        .add-form .form-suggest .form-detail-suggest .delete-suggest-icon {
+            position: absolute;
+            right: 10px;
+            color: #d89292;
+            cursor: pointer;
+            transition: all linear 0.2s;
+        }
+
+        .add-form .form-suggest .form-detail-suggest .delete-suggest-icon:hover {
+            color: #f20e0e;
+        }
+
+        .add-form .form-suggest .form-detail-suggest input[type=text] {
+            border: 1px solid #ccc;
+            width: 325px;
+        }
+
+        .mt-10 {
+            margin-top: 10px;
+        }
+
+        .add-form .add-suggest {
+            display: flex;
+            align-items: center;
+            gap: 0 20px;
+        }
+
+        .add-form .add-suggest label {
+            margin: 0;
+        }
+
+        .add-form .add-suggest a {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .add-form .checkbox-mul {
+            display: flex;
+            align-items: center;
+            gap: 0 15px;
+            position: relative;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .add-form .checkbox-mul input[type=checkbox] {
+            display: none;
+        }
+
+        .add-form .checkbox-mul .label-checkbox-mul {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid #2bc846;
+            position: relative;
+        }
+
+        .add-form .checkbox-mul .label-checkbox-mul:before {
+            content: "\f00c";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-weight: 900;
+            font-family: "Font Awesome 5 Free";
+            transform: translate(-50%, -50%);
+            font-size: 17px;
+            color: #03cc0f;
+            opacity: 0;
+            visibility: hidden;
+            transition: all linear 0.2s;
+        }
+
+        .add-form .checkbox-mul #answer-mul:checked + .label-checkbox-mul:before {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .add-form .add-question-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0 20px;
+            padding-bottom: 10px;
+        }
+
+        .add-form .add-question-icon .add-question-label {
+            display: flex;
+            align-items: center;
+            gap: 0 10px;
+            background: #b700ff;
+            padding: 5px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bolder;
+            cursor: pointer;
+            transform: scale(1);
+            transition: all linear 0.2s;
+        }
+
+        .add-form .add-question-icon .add-question-label:hover {
+            transform: scale(1.2);
+        }
+
+        .add-form .add-question-icon .select-question-label {
+            display: flex;
+            align-items: center;
+            gap: 0 10px;
+            background: #ff00f2;
+            padding: 5px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bolder;
+            cursor: pointer;
+            transition: all linear 0.2s;
+            transform: scale(1);
+        }
+
+        .add-form .add-question-icon .select-question-label:hover {
+            transform: scale(1.2);
+        }
+
+        .add-form .add-avatar-exam {
+            margin: 20px 0;
+        }
+
+        .add-form .add-avatar-exam label {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            color: #b8aaaa;
+        }
+
+        .add-form .add-avatar-exam label i {
+            cursor: pointer;
+        }
+
+        .add-form .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            transition: all linear 0.2s;
+        }
+
+        .add-form .modal-overplay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+
+        .add-form .modal-body {
+            position: relative;
+            margin: auto;
+        }
+
+        .add-form .modal-inner .close-modal-button {
+            position: absolute;
+            right: 30px;
+            top: 25px;
+            font-size: 20px;
+            color: #d26f6f;
+            cursor: pointer;
+            transition: all linear 0.2s;
+        }
+
+        .add-form .modal-inner .close-modal-button:hover {
+            color: #fc2626;
+        }
+
+        .question-form {
+            border: 2px solid #df8646;
+            padding: 15px
+        }
+
+        .add-form .question-form-wrapper {
+            margin: 25px 0;
+        }
+
+        .add-form .question-form-wrapper .control-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0 20px;
+        }
+
+        .add-form .question-form-wrapper .control-question label {
+            margin: 0;
+            padding: 5px 20px;
+            border: 2px solid #df8646;
+            border-bottom: none;
+            background: #df8646;
+            color: white;
+        }
+
+        .add-form .question-form-wrapper .control-question .control-question-icon {
+            display: flex;
+            gap: 0 3px;
+        }
+
+        .add-form .question-form-wrapper .control-question .control-question-icon span {
+            display: flex;
+            align-items: center;
+            gap: 0 10px;
+            padding: 5px 20px;
+            border: 2px solid #df8646;
+            border-bottom: none;
+            background: #df8646;
+            color: white;
+            font-weight: bolder;
+            cursor: pointer;
+            transition: all linear 0.2s;
+        }
+
+        .add-form .question-form-wrapper .control-question .control-question-icon span:hover {
+            background: white;
+            color: #df8646;
+        }
+
+        #list-question-exam .question-form .list-suggest-question-exam .list-suggest-question-content {
+            display: flex;
+            align-items: center;
+            gap: 0 10px;
+            font-size: 17px;
+        }
+
+        #list-question-exam .question-form .list-suggest-question-exam .list-suggest-question-content span i {
+            font-size: 20px;
+        }
+
+        #list-question-exam .question-form .list-suggest-question-exam .list-suggest-question-content p {
+            margin: 0;
+        }
+        #view-image{
+            width: 353px;
+            height: 175px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="skin-black">
+<!-- header logo: style can be found in header.less -->
+<div th:replace="admin/fragments/header"></div>
+<div class="wrapper row-offcanvas row-offcanvas-left">
+    <!-- Left side column. contains the logo and sidebar -->
+    <div th:replace="admin/fragments/sidebar"></div>
+
+    <!-- CONTENT -->
+    <aside class="right-side">
+        <div class="content">
+            <div class="content-wrapper" style="display: flex;align-items: center;justify-content: center">
+                <!-- Content Header (Page header) -->
+                <div class="content-header">
+                    <div class="container-fluid">
+                        <div class="add-wrapper">
+                            <div class="add">
+                                <div class="add-title">
+                                    <h1>Tạo đề thi</h1>
+                                </div>
+                                <div class="add-form">
+                                    <form>
+                                        Hình ảnh :
+                                        <div class="add-avatar-exam">
+                                            <input type="file" id="file" style="display: none" onchange="preview()">
+                                            <div style="display: flex;align-items: center;justify-content: center;gap: 0 10px">
+                                                <label for="file">
+                                                    <i class="fa-solid fa-upload"></i>
+                                                </label>
+                                                <img id="view-image">
+                                            </div>
+                                        </div>
+                                        Tên đề thi :
+                                        <input type="text" id="name" placeholder="Nhập tên đề thi"/>
+                                        <br/>
+                                        Cấp độ :
+                                        <select class="mt-10 form-control m-b-10" id="level">
+                                            <th:block th:each="level : ${levels}">
+                                                <option th:value="${level.id}" th:text="${level.name}"></option>
+                                            </th:block>
+                                        </select>
+                                        <br/>
+                                        <div class="add-question-icon">
+                                            <span class="add-question-label" id="button-add-new-question"><i
+                                                    class="fa-solid fa-circle-plus"></i> Thêm câu hỏi</span>
+                                            <span class="select-question-label"><i class="fa-solid fa-hand-pointer"></i>Chọn câu hỏi</span>
+                                        </div>
+                                        <div id="question-exam">
+
+                                        </div>
+                                        <script>
+                                            // Hàm kiểm tra sự kiện thay đổi của nút checkbox nhiều đáp án
+
+                                            function checkbox() {
+                                                var string = document.querySelector(".form-suggest:last-of-type > input[name='answer']");
+                                                var id = parseInt(string.id.substring(6));
+                                                if (document.getElementById('answer-mul').checked === true) {
+                                                    for (var i = 1; i <= id; i++) {
+                                                        document.getElementById("answer" + i).type = 'checkbox';
+                                                    }
+                                                } else {
+                                                    for (var i = 1; i <= id; i++) {
+                                                        document.getElementById("answer" + i).type = 'radio';
+                                                    }
+                                                }
+                                            }
+
+                                            function add() {
+                                                var id = '0';
+                                                var string = document.querySelector(".form-suggest:last-child > input[name='answer']");
+                                                if (string !== null) {
+                                                    id = string.id.substring(6);
+                                                }
+                                                var number = parseInt(id) + 1;
+                                                if (document.getElementById('answer-mul').checked === false) {
+                                                    document.getElementById("add-suggest").insertAdjacentHTML("beforeend",
+                                                        "<div class=\"form-suggest\" id=\"form-suggest\">\n" +
+                                                        "            <input type=\"radio\" name=\"answer\" id=\"answer\">\n" +
+                                                        "            <label for=\"answer\" class=\"label-answer\" id=\"label-radio\">\n" +
+                                                        "            <i class=\"fa-solid fa-circle-check\"></i>\n" +
+                                                        "             </label>\n" +
+                                                        "              <div class=\"form-detail-suggest\">\n" +
+                                                        "               <span class=\"delete-suggest-icon\" id=\"delete\" onclick='deleteSuggest(this.id)'>" +
+                                                        "                <i class=\"fa-solid fa-trash-can\"></i>" +
+                                                        "                 </span>                                     " +
+                                                        "               <input type=\"text\" id=\"suggest\">\n" +
+                                                        "               </div>\n" +
+                                                        "              </div>");
+                                                } else {
+                                                    document.getElementById("add-suggest").insertAdjacentHTML("beforeend",
+                                                        "<div class=\"form-suggest\" id=\"form-suggest\">\n" +
+                                                        "            <input type=\"checkbox\" name=\"answer\" id=\"answer\">\n" +
+                                                        "            <label for=\"answer\" class=\"label-answer\" id=\"label-radio\">\n" +
+                                                        "            <i class=\"fa-solid fa-circle-check\"></i>\n" +
+                                                        "             </label>\n" +
+                                                        "              <div class=\"form-detail-suggest\">\n" +
+                                                        "               <span class=\"delete-suggest-icon\" id=\"delete\" onclick='deleteSuggest(this.id)'>" +
+                                                        "                <i class=\"fa-solid fa-trash-can\"></i>" +
+                                                        "                 </span>                                     " +
+                                                        "               <input type=\"text\" id=\"suggest\">\n" +
+                                                        "               </div>\n" +
+                                                        "              </div>");
+                                                }
+
+                                                var radio = document.getElementById("answer").id = 'answer' + number;
+                                                document.getElementById("label-radio").id = 'label-radio' + number;
+                                                document.getElementById("label-radio" + number).htmlFor = radio;
+                                                document.getElementById("suggest").id = 'suggest' + number;
+                                                document.getElementById("form-suggest").id = 'form-suggest' + number;
+                                                document.getElementById("delete").id = 'delete' + number;
+
+                                            }
+
+                                            function deleteSuggest(id) {
+                                                var id = parseInt(document.getElementById(id).id.substring(6));
+                                                document.getElementById("form-suggest" + id).remove();
+                                            }
+
+                                            function modal() {
+
+                                            }
+                                        </script>
+
+                                        <div id="list-question-exam">
+
+                                        </div>
+
+                                        <div class="modal" id="modal">
+                                            <div class="modal-overplay"></div>
+                                            <div class="modal-body">
+                                                <div class="modal-inner" id="modal-inner">
+                                                    <div class="close-modal-button" id="close-modal">
+                                                        <span><i class="fa-solid fa-circle-xmark"></i></span>
+                                                    </div>
+                                                    <div id="modal-content"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input value="Create" id="saveExam">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /.container-fluid -->
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- /CONTENT -->
+</div><!-- ./wrapper -->
+
+<!-- jQuery 2.0.2 -->
+<script th:src="@{http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js}"></script>
+<script th:src="@{/admin/js/jquery.min.js}" type="text/javascript"></script>
+
+
+<!-- jQuery UI 1.10.3 -->
+<script th:src="@{/admin/js/jquery-ui-1.10.3.min.js}" type="text/javascript"></script>
+<!-- Bootstrap -->
+<script th:src="@{/admin/js/bootstrap.min.js}" type="text/javascript"></script>
+<!-- daterangepicker -->
+<script th:src="@{/admin/js/plugins/daterangepicker/daterangepicker.js}" type="text/javascript"></script>
+
+<script th:src="@{/admin/js/plugins/chart.js}" type="text/javascript"></script>
+
+<!-- datepicker
+<script src="js/plugins/datepicker/bootstrap-datepicker.js" type="text/javascript"></script>-->
+<!-- Bootstrap WYSIHTML5
+<script src="js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>-->
+<!-- iCheck -->
+<script th:src="@{/admin/js/plugins/iCheck/icheck.min.js}" type="text/javascript"></script>
+<!-- calendar -->
+<script th:src="@{/admin/js/plugins/fullcalendar/fullcalendar.js}" type="text/javascript"></script>
+
+<!-- Director App -->
+<script th:src="@{/admin/js/Director/app.js}" type="text/javascript"></script>
+
+<!-- Director dashboard demo (This is only for demo purposes) -->
+<script th:src="@{/admin/js/Director/dashboard.js}" type="text/javascript"></script>
+
+<!-- Director for demo purposes -->
+<script type="text/javascript">
+    $('input').on('ifChecked', function (event) {
+        // var element = $(this).parent().find('input:checkbox:first');
+        // element.parent().parent().parent().addClass('highlight');
+        $(this).parents('li').addClass("task-done");
+        console.log('ok');
+    });
+    $('input').on('ifUnchecked', function (event) {
+        // var element = $(this).parent().find('input:checkbox:first');
+        // element.parent().parent().parent().removeClass('highlight');
+        $(this).parents('li').removeClass("task-done");
+        console.log('not');
+    });
+
+</script>
+<script>
+    $('#noti-box').slimScroll({
+        height: '400px',
+        size: '5px',
+        BorderRadius: '5px'
+    });
+
+    $('input[type="checkbox"].flat-grey, input[type="radio"].flat-grey').iCheck({
+        checkboxClass: 'icheckbox_flat-grey',
+        radioClass: 'iradio_flat-grey'
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        "use strict";
+        //BAR CHART
+        var data = {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+                {
+                    label: "My First dataset",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                },
+                {
+                    label: "My Second dataset",
+                    fillColor: "rgba(151,187,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(151,187,205,1)",
+                    data: [28, 48, 40, 19, 86, 27, 90]
+                }
+            ]
+        };
+        new Chart(document.getElementById("linechart").getContext("2d")).Line(data, {
+            responsive: true,
+            maintainAspectRatio: false,
+        });
+
+    });
+    // Chart.defaults.global.responsive = true;
+</script>
+<script type="text/javascript">
+
+    function preview(){
+        document.getElementById("view-image").src = URL.createObjectURL(event.target.files[0]);
+    }
+
+    $(document.body).on("click", "#saveBtn", function () {
+        if ($("input[name=answer]:checked").val() === undefined) {
+            alert("Hãy chọn đáp án đúng")
+        } else {
+            var questionName = $('#questionName').val();
+            var category = $('#questionCatalog').val();
+            var mul = document.getElementById('answer-mul').checked;
+            var score = $("#questionScore").val();
+            var questionId;
+
+            var questionModel = {
+                name: questionName,
+                categoryId: category,
+                multiple: mul
+            };
+
+            console.log(questionName)
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8086/api/admin/question/add",
+                data: JSON.stringify(questionModel),
+                contentType: "application/json",
+                error: function () {
+                    alert("Thêm câu hỏi đã lỗi !");
+                },
+                success: function (success) {
+                    questionId = success.id;
+                    var string = document.querySelector(".form-suggest:last-child > input[name='answer']");
+                    var id = parseInt(string.id.substring(6));
+                    for (var i = 1; i <= id; i++) {
+                        var suggest = $("#suggest" + i).val();
+                        var check = $("#answer" + i + ":checked").val();
+                        if (check == 'on') {
+                            check = true;
+                        } else {
+                            check = false;
+                        }
+                        var suggestModel = {
+                            content: suggest,
+                            questionId: success.id,
+                            answer: check
+                        };
+
+                        console.log(suggestModel)
+
+                        $.ajax({
+                            type: "POST",
+                            url: "http://localhost:8086/api/admin/suggest/add",
+                            data: JSON.stringify(suggestModel),
+                            contentType: "application/json",
+                            error: function () {
+                                alert("Thêm câu hỏi thất bại!")
+                            },
+                            success: function () {
+                            }
+                        })
+                    }
+                    alert("Thêm câu hỏi thành công");
+                    $("#modal-content").empty();
+                    $("#modal").css("display", "none");
+
+                    // Ajax lấy ra các đáp án
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:8086/api/admin/suggest?id=" + success.id,
+                        error: function (error) {
+                            console.log(error)
+                        },
+                        success: function (success) {
+                            // Thêm vào HTML
+                            var element = document.querySelector("#list-question-exam .question-form-wrapper:last-of-type");
+                            var id = 0;
+                            if (element != null) {
+                                id = parseInt(element.id.substring(8));
+                            }
+                            id = id + 1;
+                            document.getElementById("list-question-exam").insertAdjacentHTML("beforeend",
+                                "<div class=\"question-form-wrapper\" id=\"question\">\n" +
+                                "                                            <div class=\"control-question\">\n" +
+                                "                                                <label id=\"number\"></label>\n" +
+                                "                                                <div class=\"control-question-icon\">\n" +
+                                "                                                    <span><i class=\"fa-solid fa-pen\"></i> Edit</span>\n" +
+                                "                                                    <span><i class=\"fa-solid fa-trash-can\"></i> Delete</span>\n" +
+                                "                                                </div>\n" +
+                                "                                            </div>\n" +
+                                "                                            <div class=\"add-form question-form\">\n" +
+                                "                                                <form>\n" +
+                                "                                                    <h3 class=\"name-question-exam\" id=\"label\"><span></span></h3>\n" +
+                                "                                                    <div id=\"suggest-list\" class=\"list-suggest-question-exam\">\n" +
+                                "                                                    </div>\n" +
+                                "                                                    <br>\n" +
+                                "                                                </form>\n" +
+                                "                                            </div>\n" +
+                                "                                        </div>");
+
+                            document.getElementById("question").id = 'question' + id;
+                            document.getElementById("number").id = 'number' + id;
+                            document.getElementById("number" + id).innerHTML = 'Câu ' + id;
+                            document.getElementById("label").id = 'label' + id;
+                            document.getElementById("label" + id).append(" "+questionName);
+                            document.querySelector("#label"+id+" span").append("("+score+" điểm)");
+                            document.querySelector("#label"+id+" span").value = score;
+                            document.getElementById("question"+id).classList.add("query"+questionId);
+                            var test = document.getElementById("suggest-list").id = 'suggest-list' + id;
+
+                            success.forEach(function (element) {
+                                console.log(element.content);
+                                var suggest = document.querySelector
+                                (".question-form-wrapper:last-of-type .list-suggest-question-exam .list-suggest-question-content:last-of-type");
+                                var number = 0;
+                                if (suggest != null) {
+                                    number = parseInt(suggest.id.substring(7));
+                                }
+                                number++;
+                                var char = String.fromCharCode(number + 64);
+                                document.getElementById(test).insertAdjacentHTML("beforeend",
+                                    "<div id=\"examSug\" class=\"list-suggest-question-content\">" +
+                                    "<span id=\"check-answer\"></span>" +
+                                    "<p></p>" +
+                                    "</div>");
+                                if (element.answer == true) {
+                                    document.getElementById("examSug").style.color = 'green';
+                                    document.getElementById("examSug").style.fontWeight = 'bolder';
+                                }
+                                document.getElementById("check-answer").id = 'check-answer' + number;
+                                document.getElementById("examSug").id = 'examSug' + number;
+                                document.querySelector("#suggest-list" + id + " #examSug" + number + " p").innerHTML = element.content;
+                                document.querySelector("#suggest-list" + id + " #check-answer" + number).innerHTML = char + ".";
+                            })
+                        }
+                    })
+
+                }
+            })
+        }
+
+    });
+</script>
+<script>
+    $("#button-add-new-question").click(function () {
+        document.getElementById("modal-content").insertAdjacentHTML("beforeend", "<div class=\"content-header\">\n" +
+            "                                                        <div class=\"container-fluid\">\n" +
+            "                                                            <div class=\"add-wrapper\">\n" +
+            "                                                                <div class=\"add\">\n" +
+            "                                                                    <div class=\"add-title\">\n" +
+            "                                                                        <h1>Thêm câu hỏi</h1>\n" +
+            "                                                                    </div>\n" +
+            "                                                                    <div class=\"add-form\">\n" +
+            "                                                                        <form id=\"form-add\">\n" +
+            "                                                                            Tên câu hỏi :\n" +
+            "                                                                            <input type=\"text\" id=\"questionName\"/>\n" +
+            "                                                                            <br/>\n" +
+            "                                                                            Số điểm :\n" +
+            "                                                                            <input type=\"number\" id=\"questionScore\"/>\n" +
+            "                                                                            <br/>\n" +
+            "                                                                            Chuyên mục :\n" +
+            "                                                                            <select class=\"mt-10 form-control m-b-10\"\n" +
+            "                                                                                    id=\"questionCatalog\">\n" +
+            "                                                                            </select>\n" +
+            "                                                                            <br/>\n" +
+            "                                                                            <div class=\"checkbox-mul\">\n" +
+            "                                                                                <input type=\"checkbox\" id=\"answer-mul\"\n" +
+            "                                                                                       onchange=\"checkbox()\">\n" +
+            "                                                                                <label class=\"label-checkbox-mul\"\n" +
+            "                                                                                       for=\"answer-mul\">\n" +
+            "                                                                                </label>\n" +
+            "                                                                                <span>Cho phép chọn nhiều đáp án</span>\n" +
+            "                                                                            </div>\n" +
+            "                                                                            <div class=\"add-suggest\">\n" +
+            "                                                                                <label>Đáp án : </label><a\n" +
+            "                                                                                    onclick=\"add()\"><i\n" +
+            "                                                                                    class=\"fa-solid fa-circle-plus\"></i></a>\n" +
+            "                                                                            </div>\n" +
+            "                                                                            <div id=\"add-suggest\">\n" +
+            "\n" +
+            "                                                                            </div>\n" +
+            "                                                                            <br>\n" +
+            "                                                                            <input value=\"Add\" id=\"saveBtn\" onclick=''>\n" +
+            "                                                                        </form>\n" +
+            "                                                                    </div>\n" +
+            "                                                                </div>\n" +
+            "                                                            </div>\n" +
+            "                                                        </div><!-- /.container-fluid -->\n" +
+            "                                                    </div>");
+
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8086/api/admin/category",
+            error: function (error) {
+                console.log(error)
+            },
+            success: function (success) {
+                console.log(success)
+                var catalog = $("#questionCatalog");
+                success.forEach(function (element) {
+                    catalog.append("<option value=" + element.id + ">" + element.name + "</option>")
+                })
+            }
+        })
+
+        $("#modal").css("display", "flex");
+    });
+
+    $("#close-modal").click(function () {
+        $("#modal").css("display", "none");
+        $("#modal-content").empty();
+    })
+</script>
+<script>
+    $("#saveExam").click(function (){
+        var name = $('#name').val();
+        var level = $('#level').val();
+        var totalMark = 0;
+        var numberOfSentences = 0;
+
+        var lastQuestion = document.querySelector("#list-question-exam .question-form-wrapper:last-of-type");
+        if(lastQuestion == null){
+            alert("Đề thi không chứa câu hỏi nào!");
+        } else {
+            numberOfSentences = lastQuestion.id.substring(8);
+            for(var j = 1; j<= numberOfSentences; j++){
+                 totalMark += parseInt(document.querySelector("#label"+j+" span").value);
+            }
+            var examRequest = new FormData();
+            examRequest.append("name",name);
+            examRequest.append("mark",totalMark);
+            examRequest.append("numberOfSentences",numberOfSentences);
+            examRequest.append("levelId",level);
+            if(file.files[0] !== undefined){
+                examRequest.append("avatar",file.files[0]);
+            }
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8086/api/admin/exam',
+                data: examRequest,
+                enctype: 'multipart/form-data',
+                processData: false,
+                cache: false,
+                contentType:false,
+                error: function (error) {
+                    alert("Thêm đề thi đã lỗi!");
+                },
+                success: function (response) {
+                    for(var i = 1; i<=numberOfSentences;i++){
+                        var questionExam = parseInt(document.querySelector("#list-question-exam .question-form-wrapper:nth-child("+i+")").classList[1].substring(5));
+                        var examQuestionModel = {
+                            exam: response.id,
+                            question: questionExam
+                        };
+                        console.log(examQuestionModel)
+                        $.ajax({
+                            type: "POST",
+                            url: "http://localhost:8086/api/admin/exam/question",
+                            data: JSON.stringify(examQuestionModel),
+                            contentType: "application/json",
+                            error: function () {
+                                alert("Thêm đề thi đã lỗi !");
+                            },
+                            success: function (success) {
+                            }
+                        })
+                    }
+                    alert(" Thêm đề thi thành công!")
+                    // window.location.replace('http://localhost:8086/admin/exam');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
